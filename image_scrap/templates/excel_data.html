@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <style>
+    
+        #drop-container {
+            /* color: white; */
+          border: 2px dashed #aaa;
+          padding: 20px;
+          text-align: center;
+          width: 100%;
+          margin-top: 15px;
+          border-radius: 10px;
+        }
+        img{
+            height: 100%;
+            width: 100%;
+            object-fit: cover;
+        }
+        .img-card{
+            height: 150px;
+        }
+      </style>
+
+</head>
+<body>
+    
+<div class="row d-flex justify-content-center">
+    <div class="col-6">
+        <form method="POST">
+            {% csrf_token %}
+            <table class="w-100">
+                <tr>
+                    <!-- <td ><input type="text" name="url" placeholder="enter url here.." class="form-control w-100"></td> -->
+                    <div id="drop-container" ondrop="dropHandler(event)" ondragover="dragOverHandler(event)" class="w-100">
+                        <p>Drag and drop a link or URL here</p>
+                        <div class="d-flex">
+                            <input type="text" id="output" name="url" class="form-control" placeholder="You can enter url here...">
+                            <input type="submit" name="send" value="Get Data" class="btn btn-primary">
+                        </div>
+                    </div>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<hr class="primary">
+
+<div class="main">
+    <div class="container">
+        <div class="row d-flex">
+            {% for row in obj %}
+            <div class="col-2 my-3 img-card">
+                <img src="{{ row }}" alt="This is image">
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+  <script>
+    function dropHandler(event) {
+      event.preventDefault();
+
+      const files = event.dataTransfer.files;
+
+      if (files.length > 0) {
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+          const output = document.getElementById('output');
+          output.value = e.target.result;
+        };
+
+        reader.readAsDataURL(files[0]);
+      } else {
+        const url = event.dataTransfer.getData('text');
+        const output = document.getElementById('output');
+        output.value = url;
+      }
+    }
+
+    function dragOverHandler(event) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'copy';
+    }
+  </script>
+</body>
+</html>
